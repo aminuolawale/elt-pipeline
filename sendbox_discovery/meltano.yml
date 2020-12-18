@@ -1,0 +1,27 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: c8495982-4b79-4d8e-b6b1-bb9b45de7c27
+plugins:
+  extractors:
+  - name: tap-mongodb
+    variant: singer-io
+    pip_url: tap-mongodb
+  loaders:
+  - name: target-bigquery
+    variant: adswerve
+    pip_url: git+https://github.com/adswerve/target-bigquery.git@v0.10.2
+  orchestrators:
+  - name: airflow
+    variant: original
+    pip_url: apache-airflow==1.10.12 --constraint https://raw.githubusercontent.com/apache/airflow/constraints-1.10.12/constraints-3.6.txt
+  files:
+  - name: airflow
+    variant: original
+    pip_url: git+https://gitlab.com/meltano/files-airflow.git
+schedules:
+- name: mongo-bigquery-discovery
+  extractor: tap-mongodb
+  loader: target-bigquery
+  transform: skip
+  interval: '@hourly'
+  start_date: 2020-12-18 07:50:53.276713
